@@ -57,8 +57,7 @@ export function init(configUpdates) {
 
 			// Render the UI
 			const App = require('../components/app').default;
-			render(<App store={store} notify={cmp.notify} />, document.body);
-
+			render(<App store={store} notify={cmp.notify} />, document.querySelector(config.handlePreferenceSelector));
 
 			// Execute any previously queued command
 			cmp.commandQueue = commandQueue;
