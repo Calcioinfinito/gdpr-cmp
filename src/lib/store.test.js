@@ -299,4 +299,67 @@ describe('store', () => {
 		expect(store.vendorConsentData.created).to.equal(created);
 		expect(store.vendorConsentData.lastUpdated).to.be.above(lastUpdated);
 	});
+
+	it('clear consent', () => {
+		const created = new Date('2018-01-01');
+		const lastUpdated = created;
+		const selectedVendorIds = new Set([1, 2]);
+		const selectedPurposeIds = new Set([234]);
+
+		const store = new Store({
+			vendorConsentData: {
+				created,
+				lastUpdated,
+				selectedVendorIds,
+				selectedPurposeIds
+			},
+			publisherConsentData: {
+				created,
+				lastUpdated,
+				selectedVendorIds,
+				selectedPurposeIds
+			}
+		});
+
+		store.persist();
+
+		store.clearVendorConsent();
+		
+		expect(store.getVendorConsentsObject().vendorConsents).to.deep.equal({});
+		expect(store.getVendorConsentsObject().purposeConsents).to.deep.equal({});
+		expect(store.getPublisherConsentsObject().customPurposes).to.deep.equal({});
+		expect(store.getPublisherConsentsObject().standardPurposes).to.deep.equal({});
+	});
+
+	it('check if VendorConsent is set', () => {
+		const created = new Date('2018-01-01');
+		const lastUpdated = created;
+		const selectedVendorIds = new Set([1, 2]);
+		const selectedPurposeIds = new Set([234]);
+
+		const store = new Store({
+			vendorConsentData: {
+				created,
+				lastUpdated,
+				selectedVendorIds,
+				selectedPurposeIds
+			},
+			publisherConsentData: {
+				created,
+				lastUpdated,
+				selectedVendorIds,
+				selectedPurposeIds
+			}
+		});
+
+		store.persist();
+		store.hasVendorConsent().then((result) => {
+			expect(result).to.be.true;
+		});
+		
+		store.clearVendorConsent();
+		store.hasVendorConsent().then((result) => {
+			expect(result).to.be.false;
+		});
+	});
 });

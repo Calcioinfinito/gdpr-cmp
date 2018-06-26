@@ -69,6 +69,12 @@ export default class Cmp {
 			};
 			callback(consentData, true);
 		},
+		
+		hasConsentData: (_, callback = () => {}) => {
+			this.store.hasVendorConsent().then((result) => {
+				callback(result, true);
+			});
+		},
 
 		/**
 		 * Get the entire vendor list

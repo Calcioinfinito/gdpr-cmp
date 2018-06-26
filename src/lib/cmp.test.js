@@ -197,7 +197,17 @@ describe('cmp', () => {
 			});
 		});
 	});
-
+	
+	it('hasConsentData executes', () => {
+		cmp.processCommand('hasConsentData', null, result => {
+			expect(result).to.be.true;
+		});
+		
+		cmp.store.clearVendorConsent();
+		cmp.processCommand('hasConsentData', null, result => {
+			expect(result).to.be.false;
+		});
+	});
 
 	it('notify invokes event listeners', (done) => {
 		cmp.processCommand('addEventListener', 'isLoaded', () => {

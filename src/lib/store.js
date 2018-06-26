@@ -1,4 +1,4 @@
-import { writePublisherConsentCookie, writeVendorConsentCookie } from "./cookie/cookie";
+import {writePublisherConsentCookie, writeVendorConsentCookie, clearVendorConsentCookie, hasVendorConsentCookie} from "./cookie/cookie";
 import config from './config';
 import { findLocale } from './localize';
 
@@ -201,6 +201,21 @@ export default class Store {
 			customPurposes: customPurposeMap
 		};
 	};
+
+	clearVendorConsent = () => {
+		clearVendorConsentCookie();
+
+		// Store the persisted data
+		this.persistedVendorConsentData = copyData({});
+		this.publisherConsentData = copyData({});
+
+		// Notify of date changes
+		this.storeUpdate();
+	};
+
+	hasVendorConsent = () => {
+		return hasVendorConsentCookie();
+	}
 
 	/**
 	 * Persist all consent data to the cookie.  This data will NOT be filtered

@@ -207,6 +207,15 @@ function writeCookie(name, value, maxAgeSeconds, path = '/') {
 	document.cookie = `${name}=${value};path=${path}${maxAge}`;
 }
 
+function clearCookie(name, maxAgeSeconds, path = '/') {
+	const maxAge = maxAgeSeconds === null ? '' : `;max-age=${maxAgeSeconds}`;
+	document.cookie = `${name}=;path=${path}${maxAge}`;
+}
+
+function clearVendorConsentCookie() {
+	clearCookie(VENDOR_CONSENT_COOKIE_NAME);
+}
+
 function readPublisherConsentCookie() {
 	// If configured try to read publisher cookie
 	if (config.storePublisherData) {
@@ -247,6 +256,18 @@ function readGlobalVendorConsentCookie() {
 	});
 }
 
+function hasGlobalVendorConsentCookie() {
+	log.debug('Request consent data from global cookie');
+	return sendPortalCommand({
+		command: 'readVendorConsent',
+	}).then(result => {
+		log.debug('Read consent data from global cookie', result);
+		return result === undefined ? false : true;
+	}).catch(err => {
+		log.error('Failed reading global vendor consent cookie', err);
+	});
+}
+
 /**
  * Write vendor consent data to third-party cookie on the
  * global vendor list domain.
@@ -277,6 +298,12 @@ function readLocalVendorConsentCookie() {
 	return Promise.resolve(cookie && decodeVendorConsentData(cookie));
 }
 
+function hasLocalVendorConsentCookie() {
+	const cookie = readCookie(VENDOR_CONSENT_COOKIE_NAME);
+	log.debug('Read consent data from local cookie', cookie);
+	return Promise.resolve(cookie === undefined ? false : true);
+}
+
 /**
  * Write vendor consent data to first-party cookie on the
  * local domain.
@@ -301,9 +328,16 @@ function writeVendorConsentCookie(vendorConsentData) {
 		writeGlobalVendorConsentCookie(vendorConsentData) : writeLocalVendorConsentCookie(vendorConsentData);
 }
 
+function hasVendorConsentCookie() {
+	return config.storeConsentGlobally ?
+		hasGlobalVendorConsentCookie() : hasLocalVendorConsentCookie();
+}
+
 export {
 	readCookie,
 	writeCookie,
+	clearCookie,
+	clearVendorConsentCookie,
 	encodeVendorConsentData,
 	decodeVendorConsentData,
 
@@ -318,6 +352,7 @@ export {
 	writeLocalVendorConsentCookie,
 	readVendorConsentCookie,
 	writeVendorConsentCookie,
+	hasVendorConsentCookie,
 
 	readPublisherConsentCookie,
 	writePublisherConsentCookie,
