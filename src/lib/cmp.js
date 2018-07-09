@@ -6,6 +6,9 @@ import {
 } from './cookie/cookie';
 
 export const CMP_GLOBAL_NAME = '__cmp';
+export const CMP_CALL_NAME = CMP_GLOBAL_NAME + 'Call';
+export const CMP_LOCATOR_NAME = CMP_GLOBAL_NAME + 'Locator';
+const CMP_RETURN_NAME = CMP_GLOBAL_NAME + 'Return';
 
 export default class Cmp {
 	constructor(store) {
@@ -69,7 +72,7 @@ export default class Cmp {
 			};
 			callback(consentData, true);
 		},
-		
+
 		hasConsentData: (_, callback = () => {}) => {
 			this.store.hasVendorConsent().then((result) => {
 				callback(result, true);
@@ -141,10 +144,18 @@ export default class Cmp {
 		},
 
 		/**
-		 * Trigger the consent tool UI to be shown
+		 * Trigger the consent tool banner to be shown
 		 */
 		showConsentTool: (_, callback = () => {}) => {
 			this.store.toggleConsentToolShowing(true);
+			callback(true);
+		},
+
+		/**
+		 * Trigger the consent tool modal to be shown
+		 */
+		showModal: (_, callback = () => {}) => {
+			this.store.toggleModalShowing(true);
 			callback(true);
 		},
 
@@ -185,7 +196,7 @@ export default class Cmp {
 				if (event) {
 					this.processCommand(command, parameter, returnValue =>
 						event.source.postMessage({
-							__cmpReturn: {
+							[CMP_RETURN_NAME]: {
 								callId,
 								command,
 								returnValue
@@ -204,11 +215,11 @@ export default class Cmp {
 	 * call `processCommand`
 	 */
 	receiveMessage = ({data, origin, source}) => {
-		const {__cmpCall: cmp} = data;
+		const {[CMP_CALL_NAME]: cmp} = data;
 		if (cmp) {
 			const {callId, command, parameter} = cmp;
 			this.processCommand(command, parameter, returnValue =>
-				source.postMessage({__cmpReturn: {callId, command, returnValue}}, origin));
+				source.postMessage({[CMP_RETURN_NAME]: {callId, command, returnValue}}, origin));
 		}
 	};
 

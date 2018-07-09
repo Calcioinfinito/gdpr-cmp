@@ -1,3 +1,4 @@
+
 import log from './log';
 
 const defaultConfig = {
@@ -11,6 +12,7 @@ const defaultConfig = {
 	forceLocale: null,
 	gdprApplies: true,
 	allowedVendorIds: null,
+	theme: {},
 	handlePreferenceSelector: null
 };
 
