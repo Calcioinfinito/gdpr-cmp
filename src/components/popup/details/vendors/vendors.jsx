@@ -95,7 +95,6 @@ export default class Vendors extends Component {
 						, or <a href='http://youronlinechoices.eu/' target='_blank' style={{color: textLinkColor}}>EDAA</a> sites.
 					</PurposesLabel></p>
 				</div>
-				<a class={style.toggleAll} onClick={this.handleToggleAll} style={{color: primaryColor}}><VendorsLabel localizeKey='acceptAll'>Allow All</VendorsLabel></a>
 				<div class={style.vendorContent}>
 					<table class={style.vendorList}>
 						<tbody>
