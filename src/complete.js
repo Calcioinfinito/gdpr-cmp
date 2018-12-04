@@ -18,8 +18,9 @@ function handleConsentResult(cmp, {vendorListVersion: listVersion} = {}, {create
 		log.debug('Could not determine vendor list version. Not showing consent tool');
 	}
 	else if (vendorListVersion !== listVersion) {
-		log.debug(`Consent found for version ${vendorListVersion}, but received vendor list version ${listVersion}. Showing consent tool`);
+		log.debug(`Consent found for version ${vendorListVersion}, but received vendor list version ${listVersion}.`);
 		cmp('showConsentTool');
+		cmp('saveAll');
 	}
 	else {
 		log.debug('Consent found. Not showing consent tool');
